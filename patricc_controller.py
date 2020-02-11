@@ -10,7 +10,7 @@ class patricc_controller():
         rospy.init_node('patricc_controller', anonymous=True)
         rospy.Subscriber('/patricc_face_tracking',CommandPosition , self.face_tracking_callback)
         rospy.Subscriber('/patricc_motion_control', CommandPosition, self.motion_control_callback)
-        rospy.Subscriber('/patricc_activation_mode', CommandPosition, self.activation_mode_callback)
+        rospy.Subscriber('/patricc_activation_mode', String, self.activation_mode_callback)
         self.publisher = rospy.Publisher("/dxl/command_position", CommandPosition, queue_size=10)
         enabler = rospy.Publisher("/dxl/enable", Bool, queue_size=10)
         time.sleep(1)
@@ -64,6 +64,7 @@ class patricc_controller():
         msg = data.data.split('|')
         self.mode['face_tracking'] = 'face_tracking' in msg
         self.mode['motion_control'] = 'motion_control' in msg
+        print('Changed mode to :', self.mode)
 
     def move_motors(self):
         if self.changed:
