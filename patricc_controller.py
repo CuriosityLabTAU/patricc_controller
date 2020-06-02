@@ -7,15 +7,12 @@ from std_msgs.msg import String, Bool
 class patricc_controller():
 
     def __init__(self):
-        rospy.init_node('patricc_controller', anonymous=True)
-        rospy.Subscriber('/patricc_face_tracking',CommandPosition , self.face_tracking_callback)
-        rospy.Subscriber('/patricc_motion_control', CommandPosition, self.motion_control_callback)
-        rospy.Subscriber('/patricc_activation_mode', String, self.activation_mode_callback)
-        self.publisher = rospy.Publisher("/dxl/command_position", CommandPosition, queue_size=10)
-        enabler = rospy.Publisher("/dxl/enable", Bool, queue_size=10)
-        time.sleep(1)
-        enabler.publish(True)
-        time.sleep(1)
+        self.mode = {
+            'face_tracking' : True,
+            'motion_control': True,
+            'face_coordinates': []
+        }
+        self.changed = True
 
         self.command = CommandPosition()
         self.robot_angle_range = [[0.0, 5.0],  # [1.1, 3.9],
@@ -28,12 +25,16 @@ class patricc_controller():
         self.command.angle[1] = 2.6
         self.command.speed = [1.5, 1.5, 2, 7, 5, 5, 5, 5]
 
-        self.mode = {
-            'face_tracking' : True,
-            'motion_control': False,
-            'face_coordinates': []
-        }
-        self.changed = True
+
+        rospy.init_node('patricc_controller', anonymous=True)
+        rospy.Subscriber('/patricc_face_tracking',CommandPosition , self.face_tracking_callback)
+        rospy.Subscriber('/patricc_motion_control', CommandPosition, self.motion_control_callback)
+        rospy.Subscriber('/patricc_activation_mode', String, self.activation_mode_callback)
+        self.publisher = rospy.Publisher("/dxl/command_position", CommandPosition, queue_size=10)
+        enabler = rospy.Publisher("/dxl/enable", Bool, queue_size=10)
+        time.sleep(1)
+        enabler.publish(True)
+        time.sleep(1)
 
         self.move_motors()
 
@@ -64,7 +65,6 @@ class patricc_controller():
         msg = data.data.split('|')
         self.mode['face_tracking'] = 'face_tracking' in msg
         self.mode['motion_control'] = 'motion_control' in msg
-        print('Changed mode to :', self.mode)
 
     def move_motors(self):
         if self.changed:
