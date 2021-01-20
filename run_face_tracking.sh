@@ -1,2 +1,2 @@
 cd ~/PycharmProjects/robot_face_tracking
-python run.py 3
+python run.py 1
