@@ -17,7 +17,7 @@ class patricc_controller():
         self.command = CommandPosition()
         self.robot_angle_range = [[0.0, 5.0],  # [1.1, 3.9],
                                   [2.8, 1.6],
-                                  [2, 3.3], [2.2, 2.5],  # [1.8, 2.5], #[2.5, 3.5], #
+                                  [2, 3.3], [2.2, 2.5],
                                   [4.1, 0.9], [1.3, 3],
                                   [1, 4.1], [2.5, 3.75]]
         self.command.id = [i for i in range(1, 9)]
