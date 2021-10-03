@@ -11,6 +11,11 @@ def start_working():
         os.system('./run_social.sh') # > /dev/null 2>&1')
         return
 
+    def worker_usb_camera():
+        print('starting face_tracking...')
+        os.system('./run_face_tracking.sh > /dev/null 2>&1')
+        return
+
     def worker_face_tracking():
         print('starting face_tracking...')
         os.system('./run_face_tracking.sh > /dev/null 2>&1')

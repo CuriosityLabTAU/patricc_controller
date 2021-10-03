@@ -53,23 +53,32 @@ class patricc_controller():
             for i, angle in enumerate(data.angle):
                 if angle >= 0.0:
                     self.mode['face_coordinates'].append(i)
-                    self.command.angle[i] = angle
-                    self.changed = True
-                    self.command.speed[2] = data.speed[2]
+                    if i == 2:
+                        self.command.angle[i] = angle
+                    else:
+                        self.command.angle[i] = self.old_motion_command[i]
+                self.changed = True
+                self.command.speed[2] = data.speed[2]
             self.move_motors()
-            self.command.speed[2] = self.speed_default[2]
+            #self.command.speed[2] = self.speed_default[2]
+            self.old_face_command[2] = self.command.angle[2]
+
 
 
     def motion_control_callback(self, data):
-        if self.mode['motion_control']:
-            for i, angle in enumerate(data.angle):
-                if angle >= 0.0:
-                    if self.mode['face_tracking'] and i in self.mode['face_coordinates']:
-                        pass
-                    else:
-                        self.command.angle[i] = angle
-                        self.changed = True
-            self.move_motors()
+        for i, angle in enumerate(data.angle):
+            if angle >= 0.0:
+                #if self.mode['face_tracking'] and i in self.mode['face_coordinates']:
+                if self.mode['face_tracking'] and i==2:
+                    self.command.angle[i] = self.old_face_command[2]
+                else:
+                    self.command.angle[i] = angle
+                self.changed = True
+        self.move_motors()
+        self.old_motion_command = self.command.angle
+        print 'old motion control: ', self.old_motion_command
+
+
 
     def activation_mode_callback(self, data):
         msg = data.data.split('|')
