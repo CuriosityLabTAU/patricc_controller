@@ -31,8 +31,8 @@ def start_working():
         threading.Thread(target=worker).start()
         threading._sleep(2.0)
 
-    run_thread(worker_social_aware)
-    #run_thread(worker_face_tracking)
+    #run_thread(worker_social_aware)
+    run_thread(worker_face_tracking)
     run_thread(worker_expose)
     run_thread(worker_patricc_controller)
 
