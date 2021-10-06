@@ -8,7 +8,7 @@ class patricc_controller():
 
     def __init__(self):
         self.mode = {
-            'face_tracking' : False,
+            'face_tracking' : True,
             'motion_control': True,
             'face_coordinates': []
         }
@@ -27,7 +27,7 @@ class patricc_controller():
         self.command.angle[3] = 1.95
         print "command angle: ", self.command.angle
         self.command.angle[1] = 2.6
-        self.command.speed = [1.5, 1.5, 2, 7, 5, 5, 5, 5]
+        self.command.speed = [1.5, 1.5, 2.5, 7, 5, 5, 5, 5]
         self.speed_default = [1.5, 1.5, 2, 7, 5, 5, 5, 5]
         self.old_motion_command = self.command.angle
         self.old_face_command = self.command.angle
@@ -58,7 +58,7 @@ class patricc_controller():
                     else:
                         self.command.angle[i] = self.old_motion_command[i]
                 self.changed = True
-                self.command.speed[2] = data.speed[2]
+                #self.command.speed[2] = data.speed[2]
             self.move_motors()
             #self.command.speed[2] = self.speed_default[2]
             self.old_face_command[2] = self.command.angle[2]
