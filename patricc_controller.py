@@ -8,8 +8,8 @@ class patricc_controller():
 
     def __init__(self):
         self.mode = {
-            'face_tracking' : True,
-            'motion_control': True,
+            'gaze_face' : True,
+            'gaze_motion': True,
             'face_coordinates': []
         }
         self.changed = True
@@ -25,10 +25,11 @@ class patricc_controller():
         self.command.angle[4] = 3.5
         self.command.angle[6] = 1.7
         self.command.angle[3] = 1.95
-        print "command angle: ", self.command.angle
+        #print "command angle: ", self.command.angle
         self.command.angle[1] = 2.6
         self.command.speed = [1.5, 1.5, 2.5, 7, 5, 5, 5, 5]
         self.speed_default = [1.5, 1.5, 2, 7, 5, 5, 5, 5]
+        self.wake_up_speed = [0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5]
         self.old_motion_command = self.command.angle
         self.old_face_command = self.command.angle
 
@@ -42,13 +43,14 @@ class patricc_controller():
         time.sleep(1)
         enabler.publish(True)
         time.sleep(1)
-
+        self.command.speed = self.wake_up_speed
         self.move_motors()
+        self.command.speed = self.speed_default
 
         rospy.spin()
 
     def face_tracking_callback(self, data):
-        if self.mode['face_tracking']:
+        if self.mode['gaze_face']:
             self.mode['face_coordinates'] = []
             for i, angle in enumerate(data.angle):
                 if angle >= 0.0:
@@ -58,7 +60,7 @@ class patricc_controller():
                     else:
                         self.command.angle[i] = self.old_motion_command[i]
                 self.changed = True
-                #self.command.speed[2] = data.speed[2]
+                self.command.speed[2] = 1.6#data.speed[2]
             self.move_motors()
             #self.command.speed[2] = self.speed_default[2]
             self.old_face_command[2] = self.command.angle[2]
@@ -69,24 +71,24 @@ class patricc_controller():
         for i, angle in enumerate(data.angle):
             if angle >= 0.0:
                 #if self.mode['face_tracking'] and i in self.mode['face_coordinates']:
-                if self.mode['face_tracking'] and i==2:
+                if self.mode['gaze_face'] and i==2:
                     self.command.angle[i] = self.old_face_command[2]
                 else:
                     self.command.angle[i] = angle
                 self.changed = True
         self.move_motors()
         self.old_motion_command = self.command.angle
-        print 'old motion control: ', self.old_motion_command
+        #print 'old motion control: ', self.old_motion_command
 
 
 
     def activation_mode_callback(self, data):
         msg = data.data.split('|')
-        print 'msg: ', msg
-        print 'mode before: ', self.mode
-        self.mode['face_tracking'] = 'face_tracking' in msg
-        self.mode['motion_control'] = 'motion_control' in msg
-        print 'mode after: ', self.mode
+        #print 'msg: ', msg
+        #print 'mode before: ', self.mode
+        self.mode['gaze_face'] = 'gaze_face' in msg
+        self.mode['gaze_motion'] = 'gaze_motion' in msg
+        #print 'mode after: ', self.mode
 
     def move_motors(self):
         if self.changed:

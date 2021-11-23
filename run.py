@@ -8,7 +8,7 @@ def start_working():
 
     def worker_social_aware():
         print('starting social aware...')
-        os.system('./run_social.sh') # > /dev/null 2>&1')
+        os.system('./run_social.sh') # > /dev/null 2>&1')++++
         return
 
     def worker_usb_camera():
@@ -36,9 +36,12 @@ def start_working():
         threading.Thread(target=worker).start()
         threading._sleep(2.0)
 
+
     #run_thread(worker_social_aware)
     run_thread(worker_face_tracking)
     run_thread(worker_expose)
     run_thread(worker_patricc_controller)
+
+
 
 start_working()
